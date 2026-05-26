@@ -1,0 +1,7 @@
+venv/
+data/*.gguf
+results/*.json
+results/*.csv
+results/*.png
+.DS_Store
+__pycache__/

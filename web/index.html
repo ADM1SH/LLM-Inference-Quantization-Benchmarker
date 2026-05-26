@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LLM Quantization & Inference Benchmarker</title>
+    <!-- Modern typography from Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <!-- Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Premium Header and Navigation Bar -->
+    <header class="app-header">
+        <div class="logo">
+            <span class="gradient-text">LLMOps</span> Benchmarker
+        </div>
+        <nav class="main-nav">
+            <a href="#overview">Overview</a>
+            <a href="#kpi-dashboard">KPIs</a>
+            <a href="#charts-section">Visualizations</a>
+            <a href="#data-section">Prompt Comparison</a>
+        </nav>
+        <div class="system-status">
+            <span class="status-indicator online"></span> Local Service Active
+        </div>
+    </header>
+
+    <main class="app-container">
+        <!-- Hero / Overview Section -->
+        <section id="overview" class="overview-section glass-panel">
+            <div class="hero-content">
+                <h1>Local LLM Inference & Quantization <span class="accent-text">Benchmarker</span></h1>
+                <p>
+                    Analyzing performance, hardware footprint, and response quality of <code>Qwen2.5-0.5B-Instruct</code> 
+                    across <b>4-bit</b>, <b>8-bit</b>, and <b>16-bit</b> precision levels running locally in Ollama on macOS.
+                </p>
+                <div class="specs-badge-container">
+                    <span class="spec-badge"><b>Hardware:</b> Apple Silicon Unified Memory</span>
+                    <span class="spec-badge"><b>Backend:</b> Ollama API</span>
+                    <span class="spec-badge"><b>Test Subject:</b> Qwen2.5 (494M parameters)</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- KPI Summary Cards Section -->
+        <section id="kpi-dashboard" class="kpi-section">
+            <div class="section-title">
+                <h2>Performance Summary</h2>
+                <p>Aggregated results across all benchmarked prompts</p>
+            </div>
+            
+            <div class="kpi-grid">
+                <!-- Card 1: Inference Speed -->
+                <div class="kpi-card glass-panel speed-card">
+                    <div class="kpi-icon">⚡</div>
+                    <div class="kpi-info">
+                        <h3>Speed Champion</h3>
+                        <div class="kpi-value" id="kpi-best-speed">--</div>
+                        <p class="kpi-subtitle">Average Generation (tokens/sec)</p>
+                    </div>
+                </div>
+
+                <!-- Card 2: VRAM Allocation -->
+                <div class="kpi-card glass-panel memory-card">
+                    <div class="kpi-icon">💾</div>
+                    <div class="kpi-info">
+                        <h3>Lightest Footprint</h3>
+                        <div class="kpi-value" id="kpi-best-vram">--</div>
+                        <p class="kpi-subtitle">Average peak VRAM used</p>
+                    </div>
+                </div>
+
+                <!-- Card 3: Average TTFT -->
+                <div class="kpi-card glass-panel ttft-card">
+                    <div class="kpi-icon">⏱️</div>
+                    <div class="kpi-info">
+                        <h3>Fastest TTFT</h3>
+                        <div class="kpi-value" id="kpi-best-ttft">--</div>
+                        <p class="kpi-subtitle">Time to First Token (TTFT)</p>
+                    </div>
+                </div>
+
+                <!-- Card 4: Quality score -->
+                <div class="kpi-card glass-panel quality-card">
+                    <div class="kpi-icon">🎯</div>
+                    <div class="kpi-info">
+                        <h3>Quality Peak</h3>
+                        <div class="kpi-value" id="kpi-best-quality">--</div>
+                        <p class="kpi-subtitle">Average Judge Rating (out of 10)</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Graphical Visualizations Section -->
+        <section id="charts-section" class="charts-section">
+            <div class="section-title">
+                <h2>Interactive Analysis Charts</h2>
+                <p>Quantization trade-offs: Speed vs. VRAM Memory vs. Quality</p>
+            </div>
+
+            <div class="charts-grid">
+                <!-- Chart 1: Speed vs Memory -->
+                <div class="chart-container glass-panel">
+                    <h3>Inference Speed & Memory Footprint</h3>
+                    <div class="canvas-wrapper">
+                        <canvas id="speedMemoryChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Chart 2: TTFT vs Quality -->
+                <div class="chart-container glass-panel">
+                    <h3>Response Quality & Time to First Token</h3>
+                    <div class="canvas-wrapper">
+                        <canvas id="ttftQualityChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Chart 3: Category Profile -->
+                <div class="chart-container glass-panel full-width-chart">
+                    <h3>Generation Speed (Tokens/s) by Prompt Category</h3>
+                    <div class="canvas-wrapper">
+                        <canvas id="categorySpeedChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Prompt-by-Prompt Comparison Section -->
+        <section id="data-section" class="data-section glass-panel">
+            <div class="table-header">
+                <div>
+                    <h2>Prompt-by-Prompt Comparative Matrix</h2>
+                    <p>Compare outputs and resource utilization side-by-side</p>
+                </div>
+                <div class="filter-controls">
+                    <label for="prompt-selector">Select Prompt Task:</label>
+                    <select id="prompt-selector" class="custom-select">
+                        <!-- Options filled by JS -->
+                    </select>
+                </div>
+            </div>
+
+            <div class="comparison-display">
+                <!-- Main comparative details panel -->
+                <div class="prompt-text-panel">
+                    <strong>Test Prompt:</strong>
+                    <blockquote id="selected-prompt-text">
+                        Select a prompt task from the dropdown to compare model outputs.
+                    </blockquote>
+                </div>
+
+                <div class="quantization-cards-container">
+                    <!-- Q4 Card -->
+                    <div class="quant-detail-card glass-panel" id="card-q4">
+                        <div class="quant-header">
+                            <span class="badge badge-4bit">4-bit</span>
+                            <h4>Q4_K_M Precision</h4>
+                        </div>
+                        <div class="metrics-subgrid">
+                            <div class="metric-item">
+                                <span class="label">Speed</span>
+                                <span class="val" id="q4-speed">--</span>
+                            </div>
+                            <div class="metric-item">
+                                <span class="label">VRAM</span>
+                                <span class="val" id="q4-vram">--</span>
+                            </div>
+                            <div class="metric-item">
+                                <span class="label">TTFT</span>
+                                <span class="val" id="q4-ttft">--</span>
+                            </div>
+                            <div class="metric-item">
+                                <span class="label">Judge Score</span>
+                                <span class="val" id="q4-score">--</span>
+                            </div>
+                        </div>
+                        <div class="output-preview">
+                            <h5>Generated Response:</h5>
+                            <pre><code id="q4-output">Loading...</code></pre>
+                        </div>
+                        <div class="judge-explanation-block">
+                            <i><b>Judge Note:</b> <span id="q4-explanation">Loading...</span></i>
+                        </div>
+                    </div>
+
+                    <!-- Q8 Card -->
+                    <div class="quant-detail-card glass-panel" id="card-q8">
+                        <div class="quant-header">
+                            <span class="badge badge-8bit">8-bit</span>
+                            <h4>Q8_0 Precision</h4>
+                        </div>
+                        <div class="metrics-subgrid">
+                            <div class="metric-item">
+                                <span class="label">Speed</span>
+                                <span class="val" id="q8-speed">--</span>
+                            </div>
+                            <div class="metric-item">
+                                <span class="label">VRAM</span>
+                                <span class="val" id="q8-vram">--</span>
+                            </div>
+                            <div class="metric-item">
+                                <span class="label">TTFT</span>
+                                <span class="val" id="q8-ttft">--</span>
+                            </div>
+                            <div class="metric-item">
+                                <span class="label">Judge Score</span>
+                                <span class="val" id="q8-score">--</span>
+                            </div>
+                        </div>
+                        <div class="output-preview">
+                            <h5>Generated Response:</h5>
+                            <pre><code id="q8-output">Loading...</code></pre>
+                        </div>
+                        <div class="judge-explanation-block">
+                            <i><b>Judge Note:</b> <span id="q8-explanation">Loading...</span></i>
+                        </div>
+                    </div>
+
+                    <!-- F16 Card -->
+                    <div class="quant-detail-card glass-panel" id="card-f16">
+                        <div class="quant-header">
+                            <span class="badge badge-16bit">16-bit</span>
+                            <h4>FP16 Full Precision</h4>
+                        </div>
+                        <div class="metrics-subgrid">
+                            <div class="metric-item">
+                                <span class="label">Speed</span>
+                                <span class="val" id="f16-speed">--</span>
+                            </div>
+                            <div class="metric-item">
+                                <span class="label">VRAM</span>
+                                <span class="val" id="f16-vram">--</span>
+                            </div>
+                            <div class="metric-item">
+                                <span class="label">TTFT</span>
+                                <span class="val" id="f16-ttft">--</span>
+                            </div>
+                            <div class="metric-item">
+                                <span class="label">Judge Score</span>
+                                <span class="val" id="f16-score">--</span>
+                            </div>
+                        </div>
+                        <div class="output-preview">
+                            <h5>Generated Response:</h5>
+                            <pre><code id="f16-output">Loading...</code></pre>
+                        </div>
+                        <div class="judge-explanation-block">
+                            <i><b>Judge Note:</b> <span id="f16-explanation">Loading...</span></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer with semantic details -->
+    <footer class="app-footer">
+        <p>&copy; 2026 LLMOps Performance Benchmarker. Optimized for local inference diagnostics.</p>
+        <p>Interactive dashboard using <i>Chart.js</i> and <i>Glassmorphism CSS</i>.</p>
+    </footer>
+
+    <script src="app.js"></script>
+</body>
+</html>
