@@ -1,4 +1,4 @@
-# LLM Inference & Quantization Benchmarker (LIQB)
+# LLM Inference & Quantization Benchmarker (LIOB)
 
 ```
 ██╗     ██╗ ██████╗ ██████╗ 
@@ -20,7 +20,7 @@ An automated, local framework for systematically profiling the performance, memo
 
 ## 1. Project Overview & Quick Start
 
-The **LLM-Inference-Quantization-Benchmarker (LIQB)** framework is designed to help researchers and developers navigate the complex trade-offs of Post-Training Quantization (PTQ). By compiling and comparing key system performance metrics (throughput, Time to First Token, peak VRAM, peak RAM, and CPU usage) alongside LLM-evaluated response quality metrics, LIQB locates the optimal deployment precision for any target local environment.
+The **LLM-Inference-Quantization-Benchmarker (LIOB)** framework is designed to help researchers and developers navigate the complex trade-offs of Post-Training Quantization (PTQ). By compiling and comparing key system performance metrics (throughput, Time to First Token, peak VRAM, peak RAM, and CPU usage) alongside LLM-evaluated response quality metrics, LIOB locates the optimal deployment precision for any target local environment.
 
 ### Quick Start
 To get started immediately on macOS (Apple Silicon):
@@ -99,7 +99,7 @@ graph TD
    ```
 
 2. **Verify/Setup Ollama Service:**
-   LIQB connects to Ollama via local sockets at `http://localhost:11434`. Ensure Ollama is running:
+   LIOB connects to Ollama via local sockets at `http://localhost:11434`. Ensure Ollama is running:
    ```bash
    ollama serve > /tmp/ollama.log 2>&1 &
    ```
@@ -147,9 +147,9 @@ graph TD
 ---
 
 ### ABSTRACT
-The exponential growth of large language model (LLM) parameter counts has precipitated a critical bottleneck in local inference environments: the exponential growth of memory requirements versus the linear or sub-linear gains in computational throughput. This paper introduces the **LLM-Inference-Quantization-Benchmarker (LIQB)** framework, a unified, automated benchmarking system designed to systematically evaluate the trade-offs between memory utilization, inference speed, and model quality under varying quantization paradigms. LIQB addresses the "precision prisoner" dilemma inherent in local LLM deployment by automating the profiling of symmetric/asymmetric quantization schemes (e.g., INT8, INT4, GGUF) across diverse hardware configurations. 
+The exponential growth of large language model (LLM) parameter counts has precipitated a critical bottleneck in local inference environments: the exponential growth of memory requirements versus the linear or sub-linear gains in computational throughput. This paper introduces the **LLM-Inference-Quantization-Benchmarker (LIOB)** framework, a unified, automated benchmarking system designed to systematically evaluate the trade-offs between memory utilization, inference speed, and model quality under varying quantization paradigms. LIOB addresses the "precision prisoner" dilemma inherent in local LLM deployment by automating the profiling of symmetric/asymmetric quantization schemes (e.g., INT8, INT4, GGUF) across diverse hardware configurations. 
 
-Through rigorous experimentation on the `Qwen2.5-0.5B-Instruct` model using **Apple M4 Pro** hardware, LIQB demonstrates that 4-bit quantization (Q4_K_M) achieves a **31.75% throughput acceleration** and **44.12% VRAM reduction** relative to FP16, with only a **12.20% degradation in response quality** (per LLM-as-a-Judge scoring). Notably, the framework reveals a **"Reasoning Paradox"** where lower-precision quantization unexpectedly improves logical reasoning accuracy in sub-billion-parameter models, which we attribute to quantization-induced regularization effects. LIQB’s architecture integrates dynamic resource monitoring, prompt-streaming evaluation pipelines, and cross-precision perplexity (PPL) computation to provide developers with actionable insights for edge deployment. This work establishes LIQB as a critical tool for navigating the non-linear, hardware-dependent trade-offs of PTQ in local AI systems.
+Through rigorous experimentation on the `Qwen2.5-0.5B-Instruct` model using **Apple M4 Pro** hardware, LIOB demonstrates that 4-bit quantization (Q4_K_M) achieves a **31.75% throughput acceleration** and **44.12% VRAM reduction** relative to FP16, with only a **12.20% degradation in response quality** (per LLM-as-a-Judge scoring). Notably, the framework reveals a **"Reasoning Paradox"** where lower-precision quantization unexpectedly improves logical reasoning accuracy in sub-billion-parameter models, which we attribute to quantization-induced regularization effects. LIOB’s architecture integrates dynamic resource monitoring, prompt-streaming evaluation pipelines, and cross-precision perplexity (PPL) computation to provide developers with actionable insights for edge deployment. This work establishes LIOB as a critical tool for navigating the non-linear, hardware-dependent trade-offs of PTQ in local AI systems.
 
 ---
 
@@ -163,7 +163,7 @@ Developers face a systemic challenge in systematically mapping these trade-offs:
 *   **Lack of Unified Metrics:** Existing tools (e.g., vLLM, llama.cpp) isolate speed or memory metrics but lack integrated quality profiling.
 
 #### Core Contribution
-LIQB introduces a novel framework for automated, end-to-end quantization profiling, featuring:
+LIOB introduces a novel framework for automated, end-to-end quantization profiling, featuring:
 1.  **Dynamic Resource Profiling:** Real-time tracking of VRAM, CPU, and RAM utilization via `psutil` and CUDA/NVML APIs.
 2.  **Cross-Precision Execution Matrix:** Support for Hugging Face Transformers, GGUF, AWQ, and GPTQ backends with explicit quantization-aware inference loops.
 3.  **Task-Specific Quality Metrics:** Integration of LLM-as-a-Judge (e.g., Llama3.2-3B) for task-specific scoring (e.g., mathematical accuracy, coherence) and cross-entropy-based PPL computation.
@@ -180,8 +180,8 @@ LIQB introduces a novel framework for automated, end-to-end quantization profili
 *   **bitsandbytes:** Implements 8-bit quantization with gradient checkpointing but focuses on training, not inference.
 *   **LLMPerf:** Benchmarks throughput and latency but omits memory footprint analysis and quality degradation.
 
-#### LIQB’s Differentiation
-LIQB unifies these dimensions through:
+#### LIOB’s Differentiation
+LIOB unifies these dimensions through:
 *   **Automated Quantization-Aware Execution:** Programmatic switching between FP16, Q8_0, and Q4_K_M via backend-specific kernels (e.g., GGUF’s SIMD optimizations).
 *   **Hardware-Agnostic Profiling:** Cross-platform compatibility via abstraction layers for CUDA, Metal, and CPU dispatch.
 *   **Task-Specific Evaluation:** Integration of mathematical riddles, coding tasks, and creative writing prompts to quantify precision-dependent failure modes.
@@ -191,7 +191,7 @@ LIQB unifies these dimensions through:
 ### SYSTEM ARCHITECTURE & CODEBASE METHODOLOGY
 
 #### Model Loading Core
-LIQB supports multiple quantization formats via backend-specific loaders:
+LIOB supports multiple quantization formats via backend-specific loaders:
 *   **Hugging Face Transformers:** FP16/BF16 execution via `AutoModelForCausalLM`.
 *   **GGUF:** 4-bit/8-bit inference via llama.cpp bindings with SIMD acceleration.
 *   **AWQ/GPTQ:** 4-bit quantization using auto_gptq and bitsandbytes wrappers.
@@ -207,7 +207,7 @@ The benchmarking loop executes:
 Metrics are aggregated into JSON and CSV files for post-hoc analysis.
 
 #### Quantization Matrix
-Supported configurations in the LIQB architecture:
+Supported configurations in the LIOB architecture:
 
 | Backend | Precision | Symmetric | Asymmetric | Hardware Support |
 | :--- | :---: | :---: | :---: | :--- |
@@ -343,12 +343,12 @@ During the Custom Prompt Suite evaluation, an anomalous phenomenon emerged: the 
 ### CONCLUSION & FUTURE DEVELOPMENT ROADMAP
 
 #### Synthesis of Findings
-The LIQB framework successfully profiles the memory-speed-quality trade-offs of local LLM execution. The M4 Pro results prove that **4-bit GGUF quantization (Q4_K_M)** provides a significant performance enhancement—yielding 44% VRAM savings and a 32% speed improvement—while retaining 88% of native quality. The discovery of the **Reasoning Paradox** highlights that quantization can act as an active cognitive optimizer for small-parameter edge applications.
+The LIOB framework successfully profiles the memory-speed-quality trade-offs of local LLM execution. The M4 Pro results prove that **4-bit GGUF quantization (Q4_K_M)** provides a significant performance enhancement—yielding 44% VRAM savings and a 32% speed improvement—while retaining 88% of native quality. The discovery of the **Reasoning Paradox** highlights that quantization can act as an active cognitive optimizer for small-parameter edge applications.
 
 #### Future Extensions
 *   **NF4/FP4 Integration:** Add support for NormalFloat4 and FP4 precision formats.
 *   **KV-Cache Quantization:** Measure memory benefits of compressing the Key-Value attention cache.
-*   **Heterogeneous GPU Orchestration:** Extend the LIQB framework to profile model parallelism across mixed GPU setups.
+*   **Heterogeneous GPU Orchestration:** Extend the LIOB framework to profile model parallelism across mixed GPU setups.
 *   **Dynamic Precision Adaptation:** Design routing layers that adjust quantization bit-width dynamically based on task difficulty.
 
 ---
