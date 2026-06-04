@@ -275,7 +275,7 @@ Calculates the average generation time per token, isolating the autoregressive d
 **Perplexity (PPL):**  
 Measures the model's likelihood distribution over a text sequence:
 ```math
-\text{PPL} = \exp\left(-\frac{1}{N} \sum_{i=1}^N \log p(x_i \mid x_{<i})\right)
+\text{PPL} = \exp\left(-\frac{1}{N} \sum_{i=1}^N \log p(x_i \mid x_{\lt i})\right)
 ```
 
 ---
