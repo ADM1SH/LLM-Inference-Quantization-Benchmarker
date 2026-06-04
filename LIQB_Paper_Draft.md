@@ -95,17 +95,27 @@ Evaluation datasets include:
 ### Quantization Mechanics
 
 **Symmetric Quantization:**  
-Maps floating-point weights $w$ to quantized integers $w_q$ symmetrically around zero:
-$$ w_q = \text{round}(w \cdot s) $$
-where the scale factor $s$ is defined as:
-$$ s = \frac{2^{b-1} - 1}{\max(|w|)} \quad \text{for } b \in \{4, 8\} $$
+Maps floating-point weights `w` to quantized integers `w_q` symmetrically around zero:
+```math
+w_q = \text{round}(w \cdot s)
+```
+where the scale factor `s` is defined as:
+```math
+s = \frac{2^{b-1} - 1}{\max(|w|)} \quad \text{for } b \in \{4, 8\}
+```
 
 **Asymmetric Quantization:**  
-Maps weights $w$ to $w_q$ by incorporating a non-zero zero-point offset $z$ to handle asymmetric distributions:
-$$ w_q = \text{clamp}\left( \text{round}\left(\frac{w}{s}\right) + z, q_{\min}, q_{\max} \right) $$
-where the scale $s$ and zero-point $z$ are:
-$$ s = \frac{w_{\max} - w_{\min}}{q_{\max} - q_{\min}} $$
-$$ z = \text{round}\left( \frac{-w_{\min}}{s} \right) + q_{\min} $$
+Maps weights `w` to `w_q` by incorporating a non-zero zero-point offset `z` to handle asymmetric distributions:
+```math
+w_q = \text{clamp}\left( \text{round}\left(\frac{w}{s}\right) + z, q_{\min}, q_{\max} \right)
+```
+where the scale `s` and zero-point `z` are:
+```math
+s = \frac{w_{\max} - w_{\min}}{q_{\max} - q_{\min}}
+```
+```math
+z = \text{round}\left( \frac{-w_{\min}}{s} \right) + q_{\min}
+```
 
 ---
 
@@ -113,18 +123,26 @@ $$ z = \text{round}\left( \frac{-w_{\min}}{s} \right) + q_{\min} $$
 
 **Time to First Token (TTFT):**  
 Measures the latency of the prefill phase:
-$$ \text{TTFT} = t_{\text{first\_token}} - t_{\text{request\_sent}} $$
+```math
+\text{TTFT} = t_{\text{first-token}} - t_{\text{request-sent}}
+```
 
 **Inter-Token Latency (ITL):**  
 Calculates the average generation time per token, isolating the autoregressive decoding phase:
-$$ \text{ITL} = \frac{t_{\text{total\_decode}} - \text{TTFT}}{N_{\text{tokens}} - 1} $$
+```math
+\text{ITL} = \frac{t_{\text{total-decode}} - \text{TTFT}}{N_{\text{tokens}} - 1}
+```
 
 **Throughput (tokens/s):**  
-$$ \text{Throughput} = \frac{N_{\text{tokens}}}{t_{\text{total\_generation}}} $$
+```math
+\text{Throughput} = \frac{N_{\text{tokens}}}{t_{\text{total-generation}}}
+```
 
 **Perplexity (PPL):**  
 Measures the model's likelihood distribution over a text sequence:
-$$ \text{PPL} = \exp\left(-\frac{1}{N} \sum_{i=1}^N \log p(x_i \mid x_{<i})\right) $$
+```math
+\text{PPL} = \exp\left(-\frac{1}{N} \sum_{i=1}^N \log p(x_i \mid x_{<i})\right)
+```
 
 ---
 
@@ -161,17 +179,17 @@ INT8/INT4 quantization (such as GGUF or bitsandbytes) requires model weights to 
 GGUF’s 4-bit execution kernels rely heavily on SIMD and Apple Metal Shading Language (MSL) optimizations. By grouping 32 weights into blocks with a shared scale factor (block-wise quantization), GGUF bypasses memory bandwidth thresholds, allowing the M4 Pro to achieve **247.65 tokens/s**. This block structure maintains high cache locality and mitigates CPU-to-GPU memory transfer latency.
 
 ### The Quantization Floor
-For small parameter sizes (e.g., 0.5B parameters), there is a steep "quantization floor." Below 4-bit representation (e.g., 2-bit quantization or heavy ternary compression), the capacity of the model to retain basic semantic structure collapses. Perplexity scores explode ($PPL > 100$), and the model starts producing repetitive loops or incoherent garbage. The 4-bit configuration (Q4_K_M) represents the absolute edge of this cliff, maintaining structural stability before semantic collapse.
+For small parameter sizes (e.g., 0.5B parameters), there is a steep "quantization floor." Below 4-bit representation (e.g., 2-bit quantization or heavy ternary compression), the capacity of the model to retain basic semantic structure collapses. Perplexity scores explode (`PPL > 100`), and the model starts producing repetitive loops or incoherent garbage. The 4-bit configuration (Q4_K_M) represents the absolute edge of this cliff, maintaining structural stability before semantic collapse.
 
 ---
 
 ### The Reasoning Paradox
 During the Custom Prompt Suite evaluation, an anomalous phenomenon emerged: the **4-bit quantized model out-performed the full-precision FP16 and 8-bit models in step-by-step reasoning accuracy**.
 
-Consider the response outputs to the classical Bat and Ball riddle ($x + (x + 1.00) = 1.10$):
-*   **4-bit (Q4_K_M):** Correctly calculated $2x = 0.10 \Rightarrow x = 0.05$. Answer: **$0.05**. (Judge Score: `9/10`)
-*   **8-bit (Q8_0):** Intuitively calculated $B = 0.10$. During verification, it asserted: "$0.10 + 1.10 = 1.20$. Since $1.20$ equals $1.10$, our solution is correct." It hallucinated an identity equality to justify its wrong answer. (Judge Score: `8/10`)
-*   **16-bit (FP16):** Substituted $L = B - 1$ into $B + L = 1.10$ and calculated $B - 1 + B - 1 = 1.10 \Rightarrow 2B - 2 = 1.10 \Rightarrow B = 1.55$. Answer: **$1.55**. (Judge Score: `9/10` due to judge model over-indexing on formatting).
+Consider the response outputs to the classical Bat and Ball riddle (`x + (x + 1.00) = 1.10`):
+*   **4-bit (Q4_K_M):** Correctly calculated `2x = 0.10 => x = 0.05`. Answer: **$0.05**. (Judge Score: `9/10`)
+*   **8-bit (Q8_0):** Intuitively calculated `B = 0.10`. During verification, it asserted: "$0.10 + 1.10 = 1.20$. Since `1.20` equals `1.10`, our solution is correct." It hallucinated an identity equality to justify its wrong answer. (Judge Score: `8/10`)
+*   **16-bit (FP16):** Substituted `L = B - 1` into `B + L = 1.10` and calculated `B - 1 + B - 1 = 1.10 => 2B - 2 = 1.10 => 2B = 3.10 => B = 1.55`. Answer: **$1.55**. (Judge Score: `9/10` due to judge model over-indexing on formatting).
 
 **Hypothetical Causes:**
 1.  **Quantization as Regularization:** The numerical noise introduced by mapping weights into discrete 4-bit intervals acts as a regularizer. In ultra-small models (0.5B parameters), full-precision weights are prone to overfitting to spurious correlation paths during generation. Quantization noise suppresses these weak activation routes, forcing the model to rely on stronger, more generalized reasoning associations.
