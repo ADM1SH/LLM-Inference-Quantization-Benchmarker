@@ -142,8 +142,7 @@ graph TD
 
 ### LLM Inference Quantization Benchmarking Framework: A Systematic Evaluation of Memory-Width Trade-offs in Local AI Execution
 
-**Author:** [Your Name / Affiliation]  
-**Collaborators:** pair programmed with Antigravity (Google DeepMind team)  
+**Author:** Adam Anwar    
 
 ---
 
