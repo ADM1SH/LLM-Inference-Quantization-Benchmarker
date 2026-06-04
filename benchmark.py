@@ -16,7 +16,7 @@ from huggingface_hub import hf_hub_download
 # Define constants
 OLLAMA_API_URL = "http://localhost:11434"
 REPO_ID = "Qwen/Qwen2.5-0.5B-Instruct-GGUF"
-JUDGE_MODEL = "llama3.1:latest"
+JUDGE_MODEL = "llama3.2:3b"
 
 # Define the models and their configurations
 MODEL_CONFIGS = {
@@ -150,7 +150,7 @@ def get_ollama_loaded_model_vram(model_name):
 
 # Resource monitor class to track peaks during inference
 class SystemResourceMonitor(threading.Thread):
-    def __init__(self, model_name, interval=0.05):
+    def __init__(self, model_name, interval=0.5):
         super().__init__()
         self.model_name = model_name
         self.interval = interval
@@ -216,7 +216,7 @@ Do not output any markdown code blocks, just raw JSON.
                 "stream": False,
                 "format": "json"
             },
-            timeout=30
+            timeout=60
         )
         if response.status_code == 200:
             result = response.json()
@@ -275,8 +275,13 @@ def main():
         try:
             requests.post(
                 f"{OLLAMA_API_URL}/api/generate",
-                json={"model": model_name, "prompt": "Pre-warm test. Reply with one word: ready.", "stream": False},
-                timeout=30
+                json={
+                    "model": model_name,
+                    "prompt": "Pre-warm test. Reply with one word: ready.",
+                    "stream": False,
+                    "options": {"num_predict": 10}
+                },
+                timeout=60
             )
             # Sleep briefly to let stats settle
             time.sleep(2)
@@ -301,9 +306,12 @@ def main():
                     json={
                         "model": model_name,
                         "prompt": p_data["prompt"],
-                        "stream": False
+                        "stream": False,
+                        "options": {
+                            "num_predict": 512
+                        }
                     },
-                    timeout=60
+                    timeout=180
                 )
                 end_time = time.time()
                 monitor.stop()

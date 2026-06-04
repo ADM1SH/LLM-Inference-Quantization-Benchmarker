@@ -1,9 +1,16 @@
 model_id,model_name,quantization,prompt_id,category,ttft_sec,tokens_per_sec,eval_count,generation_time_sec,peak_vram_mb,peak_ram_mb,peak_cpu_percent,judge_score
-qwen2.5-0.5b-q4,qwen2.5-0.5b-instruct-q4_k_m,4-bit (Q4_K_M),1,Reasoning,0.0157,238.07,368,1.5458,732.59,9918.89,30.9,9
-qwen2.5-0.5b-q4,qwen2.5-0.5b-instruct-q4_k_m,4-bit (Q4_K_M),2,Coding,0.3317,210.03,1273,6.0611,732.59,9709.88,73.1,9
-qwen2.5-0.5b-q4,qwen2.5-0.5b-instruct-q4_k_m,4-bit (Q4_K_M),5,Math,0.0392,234.68,447,1.9047,732.59,9915.97,29.7,9
-qwen2.5-0.5b-q8,qwen2.5-0.5b-instruct-q8_0,8-bit (Q8_0),1,Reasoning,0.0452,211.52,324,1.5317,864.41,10103.53,42.2,9
-qwen2.5-0.5b-q8,qwen2.5-0.5b-instruct-q8_0,8-bit (Q8_0),2,Coding,0.0374,204.45,690,3.3748,864.41,10088.33,47.0,8
-qwen2.5-0.5b-q8,qwen2.5-0.5b-instruct-q8_0,8-bit (Q8_0),5,Math,0.0407,197.96,669,3.3795,864.41,10034.75,30.3,8
-qwen2.5-0.5b-f16,qwen2.5-0.5b-instruct-fp16,16-bit (FP16),1,Reasoning,0.0191,154.45,365,2.3632,1319.38,10095.08,28.4,9
-qwen2.5-0.5b-f16,qwen2.5-0.5b-instruct-fp16,16-bit (FP16),5,Math,0.0601,176.88,674,3.8106,1319.38,10337.75,30.2,8
+qwen2.5-0.5b-q4,qwen2.5-0.5b-instruct-q4_k_m,4-bit (Q4_K_M),1,Reasoning,0.0247,246.1,425,1.727,720.21,10300.98,18.0,9
+qwen2.5-0.5b-q4,qwen2.5-0.5b-instruct-q4_k_m,4-bit (Q4_K_M),2,Coding,0.0209,249.66,512,2.0508,720.21,11499.72,20.2,8
+qwen2.5-0.5b-q4,qwen2.5-0.5b-instruct-q4_k_m,4-bit (Q4_K_M),3,Creative Writing,0.0198,247.63,512,2.0676,720.21,11466.28,13.8,7
+qwen2.5-0.5b-q4,qwen2.5-0.5b-instruct-q4_k_m,4-bit (Q4_K_M),4,Summarization,0.0375,247.39,512,2.0696,720.21,11469.06,17.4,4
+qwen2.5-0.5b-q4,qwen2.5-0.5b-instruct-q4_k_m,4-bit (Q4_K_M),5,Math,0.0184,247.48,512,2.0689,720.21,11555.75,11.4,8
+qwen2.5-0.5b-q8,qwen2.5-0.5b-instruct-q8_0,8-bit (Q8_0),1,Reasoning,0.0225,216.88,230,1.0605,847.29,11639.97,12.6,8
+qwen2.5-0.5b-q8,qwen2.5-0.5b-instruct-q8_0,8-bit (Q8_0),2,Coding,0.0189,217.48,512,2.3543,847.29,11753.61,12.8,9
+qwen2.5-0.5b-q8,qwen2.5-0.5b-instruct-q8_0,8-bit (Q8_0),3,Creative Writing,0.0243,217.49,512,2.3541,847.29,11684.33,9.7,7
+qwen2.5-0.5b-q8,qwen2.5-0.5b-instruct-q8_0,8-bit (Q8_0),4,Summarization,0.0314,217.41,512,2.355,847.29,11725.64,11.1,8
+qwen2.5-0.5b-q8,qwen2.5-0.5b-instruct-q8_0,8-bit (Q8_0),5,Math,0.0207,216.6,476,2.1976,847.29,11765.78,12.0,8
+qwen2.5-0.5b-f16,qwen2.5-0.5b-instruct-fp16,16-bit (FP16),1,Reasoning,0.0225,188.37,403,2.1394,1288.93,11879.53,11.1,9
+qwen2.5-0.5b-f16,qwen2.5-0.5b-instruct-fp16,16-bit (FP16),2,Coding,0.0226,188.16,512,2.7211,1288.93,11838.59,9.6,8
+qwen2.5-0.5b-f16,qwen2.5-0.5b-instruct-fp16,16-bit (FP16),3,Creative Writing,0.0197,188.01,512,2.7232,1288.93,11946.45,10.9,8
+qwen2.5-0.5b-f16,qwen2.5-0.5b-instruct-fp16,16-bit (FP16),4,Summarization,0.0312,187.87,512,2.7253,1288.93,11914.03,10.5,7
+qwen2.5-0.5b-f16,qwen2.5-0.5b-instruct-fp16,16-bit (FP16),5,Math,0.0204,187.39,471,2.5135,1288.93,12111.47,18.7,9
