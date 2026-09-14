@@ -66,8 +66,8 @@ graph TD
     B --> C[Launch Ollama Service API]
     C --> D[Run benchmark.py]
     D --> E[Check GGUF models in data/]
-    E -- Missing GGUF --> F[Download from HuggingFace Hub]
-    E -- Present GGUF --> G[Register model in Ollama CLI]
+    E - Missing GGUF --> F[Download from HuggingFace Hub]
+    E - Present GGUF --> G[Register model in Ollama CLI]
     F --> G
     G --> H[Run Pre-warm Inference Call]
     H --> I[Execute Prompt Suite across Q4, Q8, FP16]
@@ -343,7 +343,7 @@ During the Custom Prompt Suite evaluation, an anomalous phenomenon emerged: the 
 ### CONCLUSION & FUTURE DEVELOPMENT ROADMAP
 
 #### Synthesis of Findings
-The LIOB framework successfully profiles the memory-speed-quality trade-offs of local LLM execution. The M4 Pro results prove that **4-bit GGUF quantization (Q4_K_M)** provides a significant performance enhancement—yielding 44% VRAM savings and a 32% speed improvement—while retaining 88% of native quality. The discovery of the **Reasoning Paradox** highlights that quantization can act as an active cognitive optimizer for small-parameter edge applications.
+The LIOB framework successfully profiles the memory-speed-quality trade-offs of local LLM execution. The M4 Pro results prove that **4-bit GGUF quantization (Q4_K_M)** provides a significant performance enhancement:yielding 44% VRAM savings and a 32% speed improvement:while retaining 88% of native quality. The discovery of the **Reasoning Paradox** highlights that quantization can act as an active cognitive optimizer for small-parameter edge applications.
 
 #### Future Extensions
 *   **NF4/FP4 Integration:** Add support for NormalFloat4 and FP4 precision formats.
@@ -358,3 +358,37 @@ The LIOB framework successfully profiles the memory-speed-quality trade-offs of 
 *   [Dashboard Application Core js](file:///Users/adamanwar/Desktop/Coding%20Projects/LLM-Inference-Quantization-Benchmarker/web/app.js)
 *   [Raw JSON Dataset](file:///Users/adamanwar/Desktop/Coding%20Projects/LLM-Inference-Quantization-Benchmarker/web/results/benchmark_results.json)
 *   [Matplotlib Static Output Chart](file:///Users/adamanwar/Desktop/Coding%20Projects/LLM-Inference-Quantization-Benchmarker/web/results/benchmark_summary.png)
+
+
+## Support
+Submit issues, questions, or bug reports to the GitHub issue tracker:
+https://github.com/ADM1SH/LLM-Inference-Quantization-Benchmarker/issues
+
+
+## Roadmap
+* [x] Core architecture and baseline implementation.
+* [x] Functional verification and test coverage.
+* [ ] Add MLX engine support for Apple Silicon unified memory
+* [ ] Export results to interactive Grafana dashboards
+
+
+## Contributing
+Contributions are welcome.
+1. Fork the repository.
+2. Create a feature branch: `git checkout -b feature/improvement`.
+3. Commit your changes: `git commit -m "feat: enhance functionality"`.
+4. Push to the branch: `git push origin feature/improvement`.
+5. Open a Pull Request.
+
+
+## Authors and Acknowledgment
+* **Adam Anwar** (ADM1SH) - Lead architect and developer.
+* Developed by Adam Anwar. Integrates with llama.cpp and Hugging Face Transformers.
+
+
+## License
+Licensed under the MIT License. See `LICENSE` for details.
+
+
+## Project Status
+Active benchmark suite. Supporting GGUF, AWQ, and GPTQ quantization tiers.
