@@ -152,7 +152,7 @@ Measures the model's likelihood distribution over a text sequence:
 1. **Initialization:** Parse configuration parameters (e.g., `--quant q4_k_m --backend gguf`).
 2. **Model Loading:** Register and load the model with the specified precision into Ollama.
 3. **Warmup:** Execute dummy requests to establish a unified memory footprint.
-4. **Prompt Execution:** Stream prompts, launching the asynchronous [SystemResourceMonitor](file:///Users/adamanwar/Desktop/Coding%20Projects/LLM-Inference-Quantization-Benchmarker/benchmark.py#L152) thread.
+4. **Prompt Execution:** Stream prompts, launching the asynchronous [SystemResourceMonitor](benchmark.py#L152) thread.
 5. **Quality Assessment:** Pass response outputs to the `llama3.2:3b` judge model.
 6. **Data Export:** Generate static charts via Matplotlib/Seaborn and save JSON/CSV logs.
 
